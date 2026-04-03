@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useCallback, useRef, useState } from "react";
+import gsap from "gsap";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /*
   Web Audio API synth for retro F1 sounds.
@@ -161,6 +161,9 @@ export default function SoundManager() {
   const [muted, setMuted] = useState(false);
   const [countdown, setCountdown] = useState(-1);
   const engine = useRef<RetroAudioEngine | null>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const muteButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleStart = useCallback(() => {
     const e = getAudioEngine();
@@ -179,7 +182,16 @@ export default function SoundManager() {
         e.playCountdownBeep(true);
         e.startEngine();
         setCountdown(-1);
-        setStarted(true);
+        // Fade out overlay then set started
+        if (overlayRef.current) {
+          gsap.to(overlayRef.current, {
+            opacity: 0,
+            duration: 0.5,
+            onComplete: () => setStarted(true),
+          });
+        } else {
+          setStarted(true);
+        }
         clearInterval(interval);
       }
     }, 600);
@@ -192,13 +204,38 @@ export default function SoundManager() {
     setMuted(isMuted);
   }, []);
 
+  // Pulsing title animation
+  useEffect(() => {
+    if (!started && countdown < 0 && titleRef.current) {
+      gsap.to(titleRef.current, {
+        opacity: 0.5,
+        duration: 1,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+      });
+    }
+  }, [started, countdown]);
+
+  // Fade in mute button after start
+  useEffect(() => {
+    if (started && muteButtonRef.current) {
+      gsap.from(muteButtonRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 0.5,
+        delay: 1,
+        ease: "power2.out",
+      });
+    }
+  }, [started]);
+
   // Start screen overlay
   if (!started) {
     return (
-      <motion.div
+      <div
+        ref={overlayRef}
         className="fixed inset-0 z-[100] bg-[#0d0a07] flex flex-col items-center justify-center"
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
       >
         <div className="scanline-overlay" />
         <div className="relative z-10 flex flex-col items-center gap-6">
@@ -225,47 +262,42 @@ export default function SoundManager() {
             </>
           ) : (
             <>
-              <motion.div
+              <div
+                ref={titleRef}
                 className="font-pixel text-xl text-[#c4722a] text-center"
                 style={{
                   textShadow: "2px 2px 0 #6a3010, 4px 4px 0 #3a1808",
                 }}
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
               >
                 F1 PORTFOLIO
-              </motion.div>
+              </div>
               <div className="font-pixel text-[8px] text-[#6a5840] text-center tracking-wider">
                 Om Brahmbhatt · Full Stack Engineer
               </div>
-              <motion.button
+              <button
                 onClick={handleStart}
-                className="mt-4 font-pixel text-[10px] px-6 py-3 bg-[#c4722a] text-[#0d0a07] rounded-lg border-2 border-[#f0a040] cursor-pointer tracking-wider hover:bg-[#f0a040] transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="mt-4 font-pixel text-[10px] px-6 py-3 bg-[#c4722a] text-[#0d0a07] rounded-lg border-2 border-[#f0a040] cursor-pointer tracking-wider transition-all hover:bg-[#f0a040] hover:scale-105 active:scale-95"
               >
                 START RACE
-              </motion.button>
+              </button>
               <div className="font-mono text-[8px] text-[#4a3c28] mt-2">
                 🔊 Sound on for full experience
               </div>
             </>
           )}
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   // Mute toggle (after started)
   return (
-    <motion.button
+    <button
+      ref={muteButtonRef}
       onClick={handleToggleMute}
-      className="fixed bottom-4 left-4 z-[60] bg-[#0d0a07cc] border border-[#2e2415] rounded-lg px-3 py-2 backdrop-blur-sm cursor-pointer pointer-events-auto font-pixel text-[8px] text-[#c4722a] tracking-wider hover:border-[#c4722a] transition-colors"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1 }}
+      className="fixed bottom-4 left-4 z-[60] bg-[#0d0a07cc] border border-[#2e2415] rounded-lg px-3 py-2 backdrop-blur-sm cursor-pointer pointer-events-auto font-pixel text-[8px] text-[#c4722a] tracking-wider transition-colors hover:border-[#c4722a]"
     >
       {muted ? "🔇 MUTED" : "🔊 SOUND"}
-    </motion.button>
+    </button>
   );
 }

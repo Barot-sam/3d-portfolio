@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 const techStack = [
   {
@@ -45,54 +46,70 @@ const techStack = [
   },
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.04, duration: 0.4 },
-  }),
-};
-
 export default function TechGrid() {
-  let globalIndex = 0;
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const cards = el.querySelectorAll("[data-card]");
+          gsap.from(cards, {
+            opacity: 0,
+            y: 20,
+            duration: 0.4,
+            stagger: 0.04,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="space-y-3">
+    <div ref={gridRef} className="space-y-3">
       {techStack.map((group) => (
         <div key={group.group}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {group.items.map((item) => {
-              const idx = globalIndex++;
-              return (
-                <motion.div
-                  key={item.name}
-                  className="group relative overflow-hidden rounded-xl border border-[#221808] bg-[#151008] px-3.5 py-3 flex flex-col gap-1 cursor-default transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/40"
-                  style={
-                    { "--accent-color": item.color } as React.CSSProperties
-                  }
-                  custom={idx}
-                  variants={cardVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  whileHover={{ borderColor: item.color }}
-                >
-                  {/* Top accent bar on hover */}
-                  <div
-                    className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ background: item.color }}
-                  />
-                  <div className="text-lg leading-none mb-0.5">{item.icon}</div>
-                  <div className="text-xs font-bold text-[#dfc898]">
-                    {item.name}
-                  </div>
-                  <div className="text-[9px] text-[#6a5840] font-mono">
-                    {item.cat}
-                  </div>
-                </motion.div>
-              );
-            })}
+            {group.items.map((item) => (
+              <div
+                key={item.name}
+                data-card
+                className="group relative overflow-hidden rounded-xl border border-[#221808] bg-[#151008] px-3.5 py-3 flex flex-col gap-1 cursor-default hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/40"
+                style={
+                  {
+                    "--accent-color": item.color,
+                    transition: "border-color 0.2s, transform 0.2s, box-shadow 0.2s",
+                  } as React.CSSProperties
+                }
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = item.color;
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "#221808";
+                }}
+              >
+                {/* Top accent bar on hover */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: item.color }}
+                />
+                <div className="text-lg leading-none mb-0.5">{item.icon}</div>
+                <div className="text-xs font-bold text-[#dfc898]">
+                  {item.name}
+                </div>
+                <div className="text-[9px] text-[#6a5840] font-mono">
+                  {item.cat}
+                </div>
+              </div>
+            ))}
           </div>
           {/* Divider between groups */}
           <div

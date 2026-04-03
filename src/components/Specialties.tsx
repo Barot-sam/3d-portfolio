@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 const specialties = [
   {
@@ -20,16 +21,39 @@ const specialties = [
 ];
 
 export default function Specialties() {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const cards = el.querySelectorAll("[data-card]");
+          gsap.from(cards, {
+            opacity: 0,
+            y: 20,
+            duration: 0.5,
+            stagger: 0.15,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {specialties.map((card, i) => (
-        <motion.div
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {specialties.map((card) => (
+        <div
           key={card.title}
+          data-card
           className="relative overflow-hidden bg-[#131008] border border-[#221810] rounded-xl p-4 cursor-default transition-colors hover:border-[#c4722a44]"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.15, duration: 0.5 }}
         >
           {/* Glow */}
           <div
@@ -54,7 +78,7 @@ export default function Specialties() {
               </span>
             ))}
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 const items = [
   {
@@ -22,20 +23,40 @@ const items = [
 ];
 
 export default function RightNow() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.from(el.children, {
+            opacity: 0,
+            y: 15,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="flex flex-col gap-2">
+    <div ref={containerRef} className="flex flex-col gap-2">
       {items.map((item, i) => (
-        <motion.div
+        <div
           key={i}
-          className="flex items-start gap-2.5 px-3 py-2.5 bg-[#131008] border border-[#1e1608] rounded-lg text-[11px] text-[#b09070] leading-relaxed"
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1, duration: 0.4 }}
+          className="flex items-start gap-2.5 px-3 py-2.5 bg-[#131008] border border-[#1e1608] rounded-lg text-[11px] text-[#b09070] leading-relaxed opacity-0"
         >
           <span className="text-sm leading-snug shrink-0">{item.icon}</span>
           <span>{item.text}</span>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

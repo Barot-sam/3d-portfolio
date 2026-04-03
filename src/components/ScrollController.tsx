@@ -16,7 +16,6 @@ export default function ScrollController() {
   const setActiveSection = useScrollStore((s) => s.setActiveSection);
   const setSpeed = useScrollStore((s) => s.setSpeed);
   const setLap = useScrollStore((s) => s.setLap);
-  const racing = useScrollStore((s) => s.racing);
   const progressRef = useRef(0);
   const lapRef = useRef(1);
   const prevSection = useRef("hero");
@@ -101,7 +100,7 @@ export default function ScrollController() {
       // Kill tiny drift
       if (Math.abs(velocityRef.current) < 0.00005) velocityRef.current = 0;
 
-      if (velocityRef.current !== 0 && racing) {
+      if (velocityRef.current !== 0 && useScrollStore.getState().racing) {
         const newP = progressRef.current + velocityRef.current;
         applyProgress(newP, Math.abs(velocityRef.current) * 100);
       }

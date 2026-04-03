@@ -1,15 +1,37 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 export default function CassettePlayer() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.from(el, {
+            opacity: 0,
+            y: 30,
+            duration: 0.6,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <motion.div
+    <div
+      ref={containerRef}
       className="relative overflow-hidden rounded-xl border border-[#2a1e10] bg-[#0f0c07] p-5 flex flex-col items-center gap-3.5"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
     >
       {/* Scanline */}
       <div
@@ -229,6 +251,6 @@ export default function CassettePlayer() {
         </div>
         <div className="font-mono text-[9px] text-[#6a5840] shrink-0">∞:∞∞</div>
       </div>
-    </motion.div>
+    </div>
   );
 }

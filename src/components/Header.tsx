@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 const badges = [
   {
@@ -30,31 +31,43 @@ const pills = [
   { label: "SEO · Performance · 3D Web", dotColor: "bg-[#2a8a7a]" },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 export default function Header() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.set(el, { opacity: 1 });
+          const children = el.querySelectorAll("[data-animate]");
+          gsap.from(children, {
+            opacity: 0,
+            y: 20,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <motion.div
+    <div
+      ref={containerRef}
       className="relative overflow-hidden px-6 py-8 sm:px-9"
       style={{
+        opacity: 0,
         background:
           "linear-gradient(135deg, #1a0f05 0%, #231408 50%, #1a0e07 100%)",
       }}
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
     >
       {/* Radial glow */}
       <div
@@ -66,7 +79,7 @@ export default function Header() {
       />
 
       {/* Badges */}
-      <motion.div className="flex flex-wrap gap-2 mb-4" variants={itemVariants}>
+      <div data-animate className="flex flex-wrap gap-2 mb-4">
         {badges.map((b) => (
           <span
             key={b.label}
@@ -75,36 +88,36 @@ export default function Header() {
             {b.label}
           </span>
         ))}
-      </motion.div>
+      </div>
 
-      <motion.div
+      <div
+        data-animate
         className="font-mono text-xs text-[#c4722a] tracking-wider mb-1.5"
-        variants={itemVariants}
       >
         &gt; hello, world —
-      </motion.div>
+      </div>
 
-      <motion.h1
+      <h1
+        data-animate
         className="text-5xl sm:text-6xl font-bold tracking-tight leading-none mb-1 text-[#f0d5a8]"
         style={{
           textShadow:
             "1px 1px 0 #8a5820, 2px 2px 0 #6a4018, 3px 3px 0 #4a2c10, 4px 4px 0 #2e1c08, 5px 5px 12px rgba(0,0,0,0.53)",
         }}
-        variants={itemVariants}
       >
         Om Brahmbhatt
-      </motion.h1>
+      </h1>
 
-      <motion.div
+      <div
+        data-animate
         className="font-mono text-sm text-[#8a7060] mb-3.5"
-        variants={itemVariants}
       >
         @<span className="text-[#c4722a]">Barot-sam</span> on GitHub
-      </motion.div>
+      </div>
 
-      <motion.p
+      <p
+        data-animate
         className="text-sm text-[#b09878] leading-relaxed max-w-lg mb-5"
-        variants={itemVariants}
       >
         I build things that{" "}
         <strong className="text-[#d4a060] font-semibold">run everywhere</strong>{" "}
@@ -117,9 +130,9 @@ export default function Header() {
           fast, accessible, SEO-ranked
         </strong>{" "}
         products. Not just functional — refined.
-      </motion.p>
+      </p>
 
-      <motion.div className="flex flex-wrap gap-2" variants={itemVariants}>
+      <div data-animate className="flex flex-wrap gap-2">
         {pills.map((p) => (
           <div
             key={p.label}
@@ -131,7 +144,7 @@ export default function Header() {
             {p.label}
           </div>
         ))}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

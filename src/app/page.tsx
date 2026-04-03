@@ -2,7 +2,6 @@
 
 import ContentSections from "@/components/ContentSections";
 import RacingHUD from "@/components/RacingHUD";
-import ScrollController from "@/components/ScrollController";
 import SoundManager from "@/components/SoundManager";
 import dynamic from "next/dynamic";
 
@@ -22,9 +21,6 @@ export default function Home() {
 
       {/* Sound + Start Screen */}
       <SoundManager />
-
-      {/* Input Handler */}
-      <ScrollController />
     </div>
   );
 }

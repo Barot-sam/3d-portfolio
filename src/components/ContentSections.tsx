@@ -1,7 +1,8 @@
 "use client";
 
 import { SECTION_THRESHOLDS, useScrollStore } from "@/store/scrollStore";
-import { AnimatePresence, motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 // Each section panel only shows within a narrow window around its center
 const PIT_STOP_RADIUS = 0.04; // ±4% of track around center
@@ -27,26 +28,45 @@ function SectionWrapper({
   const isNearPitStop =
     activeSection === id && Math.abs(progress - center) < PIT_STOP_RADIUS;
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const wasVisible = useRef(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    if (isNearPitStop && !wasVisible.current) {
+      wasVisible.current = true;
+      gsap.fromTo(
+        el,
+        { opacity: 0, x: side === "right" ? 80 : -80 },
+        { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
+      );
+    } else if (!isNearPitStop && wasVisible.current) {
+      wasVisible.current = false;
+      gsap.to(el, {
+        opacity: 0,
+        x: side === "right" ? 80 : -80,
+        duration: 0.4,
+        ease: "power2.in",
+      });
+    }
+  }, [isNearPitStop, side]);
+
   return (
-    <AnimatePresence>
-      {isNearPitStop && (
-        <motion.div
-          initial={{ opacity: 0, x: side === "right" ? 80 : -80 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: side === "right" ? 80 : -80 }}
-          transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
-          className={`absolute top-1/2 -translate-y-1/2 ${
-            side === "right" ? "right-4 sm:right-8" : "left-4 sm:left-8"
-          } w-[340px] sm:w-[400px] max-h-[70vh] overflow-y-auto pointer-events-auto`}
-        >
-          <div className="bg-[#0d0a07ee] border border-[#2e2415] rounded-xl p-5 backdrop-blur-md shadow-[0_0_40px_rgba(196,114,42,0.1)]">
-            {/* CRT scanline effect */}
-            <div className="absolute inset-0 pointer-events-none rounded-xl opacity-30 scanline-overlay" />
-            <div className="relative z-10">{children}</div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div
+      ref={containerRef}
+      style={{ opacity: 0 }}
+      className={`absolute top-1/2 -translate-y-1/2 ${
+        side === "right" ? "right-4 sm:right-8" : "left-4 sm:left-8"
+      } w-[340px] sm:w-[400px] max-h-[70vh] overflow-y-auto pointer-events-auto`}
+    >
+      <div className="bg-[#0d0a07ee] border border-[#2e2415] rounded-xl p-5 backdrop-blur-md shadow-[0_0_40px_rgba(196,114,42,0.1)]">
+        {/* CRT scanline effect */}
+        <div className="absolute inset-0 pointer-events-none rounded-xl opacity-30 scanline-overlay" />
+        <div className="relative z-10">{children}</div>
+      </div>
+    </div>
   );
 }
 
@@ -64,14 +84,24 @@ function SectionTitle({ icon, title }: { icon: string; title: string }) {
 
 /* ── HERO ───────────────────────────────── */
 function HeroSection() {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      gsap.from(contentRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 0.5,
+        delay: 0.2,
+        ease: "power2.out",
+      });
+    }
+  }, []);
+
   return (
     <SectionWrapper id="hero" side="right">
       <SectionTitle icon="🏁" title="START GRID" />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <div ref={contentRef}>
         <div className="font-mono text-[10px] text-[#c4722a] tracking-wider mb-2">
           &gt; DRIVER PROFILE LOADED_
         </div>
@@ -110,7 +140,7 @@ function HeroSection() {
         <div className="mt-4 font-pixel text-[7px] text-[#4a3c28] tracking-wider animate-pulse">
           ↓ SCROLL TO RACE ↓
         </div>
-      </motion.div>
+      </div>
     </SectionWrapper>
   );
 }
@@ -192,16 +222,29 @@ function ProjectsSection() {
     },
   ];
 
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (listRef.current) {
+      const items = listRef.current.querySelectorAll("[data-project]");
+      gsap.from(items, {
+        opacity: 0,
+        x: 20,
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
+    }
+  }, []);
+
   return (
     <SectionWrapper id="projects" side="right">
       <SectionTitle icon="🏗️" title="PIT STOP — PROJECTS" />
-      <div className="space-y-2.5">
-        {projects.map((p, i) => (
-          <motion.div
+      <div ref={listRef} className="space-y-2.5">
+        {projects.map((p) => (
+          <div
             key={p.title}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * i }}
+            data-project
             className="group bg-[#131008] border border-[#221810] rounded-lg p-3 cursor-pointer transition-all hover:border-[#c4722a44] hover:bg-[#181208]"
           >
             <div className="flex items-center justify-between mb-1">
@@ -222,7 +265,7 @@ function ProjectsSection() {
                 [ preview.mp4 ]
               </span>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </SectionWrapper>
@@ -252,43 +295,58 @@ function SkillsSection() {
     },
   ];
 
+  const skillsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (skillsRef.current) {
+      const bars = skillsRef.current.querySelectorAll("[data-skill-bar]");
+      gsap.from(bars, {
+        width: 0,
+        duration: 1,
+        stagger: 0.1,
+        delay: 0.2,
+        ease: "power3.out",
+      });
+      const items = skillsRef.current.querySelectorAll("[data-skill]");
+      gsap.from(items, {
+        opacity: 0,
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
+    }
+  }, []);
+
   return (
     <SectionWrapper id="skills" side="left">
       <SectionTitle icon="⚡" title="PIT STOP — SKILLS" />
-      <div className="space-y-4">
+      <div ref={skillsRef} className="space-y-4">
         {skillGroups.map((group) => (
           <div key={group.title}>
             <div className="font-pixel text-[7px] text-[#6a5840] tracking-wider mb-2">
               {group.title}
             </div>
             <div className="space-y-2">
-              {group.skills.map((skill, i) => (
-                <motion.div
+              {group.skills.map((skill) => (
+                <div
                   key={skill.name}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.1 * i }}
+                  data-skill
                   className="flex items-center gap-2"
                 >
                   <span className="w-[100px] font-mono text-[9px] text-[#8a7858] shrink-0">
                     {skill.name}
                   </span>
                   <div className="flex-1 h-[5px] bg-[#1e1808] rounded-sm overflow-hidden">
-                    <motion.div
+                    <div
+                      data-skill-bar
                       className="h-full rounded-sm bg-gradient-to-r from-[#c4722a] to-[#f0a040]"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${skill.pct}%` }}
-                      transition={{
-                        delay: 0.2 + i * 0.1,
-                        duration: 1,
-                        ease: [0.22, 0.61, 0.36, 1],
-                      }}
+                      style={{ width: `${skill.pct}%` }}
                     />
                   </div>
                   <span className="w-8 text-right font-mono text-[8px] text-[#6a5840]">
                     {skill.pct}%
                   </span>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -356,16 +414,29 @@ function ExperienceSection() {
     },
   ];
 
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (listRef.current) {
+      const items = listRef.current.querySelectorAll("[data-exp]");
+      gsap.from(items, {
+        opacity: 0,
+        y: 15,
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
+    }
+  }, []);
+
   return (
     <SectionWrapper id="experience" side="right">
       <SectionTitle icon="🏆" title="PIT STOP — EXPERIENCE" />
-      <div className="space-y-3">
-        {experiences.map((exp, i) => (
-          <motion.div
+      <div ref={listRef} className="space-y-3">
+        {experiences.map((exp) => (
+          <div
             key={exp.role}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * i }}
+            data-exp
             className="border-l-2 border-[#c4722a] pl-3 py-1"
           >
             <div className="flex items-center justify-between">
@@ -388,7 +459,7 @@ function ExperienceSection() {
                 {h}
               </div>
             ))}
-          </motion.div>
+          </div>
         ))}
       </div>
     </SectionWrapper>
@@ -419,6 +490,21 @@ function ContactSection() {
     { icon: "📄", label: "Resume", value: "Download PDF", href: "#" },
   ];
 
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (listRef.current) {
+      const items = listRef.current.querySelectorAll("[data-link]");
+      gsap.from(items, {
+        opacity: 0,
+        x: -20,
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
+    }
+  }, []);
+
   return (
     <SectionWrapper id="contact" side="left">
       <SectionTitle icon="📡" title="FINISH LINE — CONTACT" />
@@ -427,16 +513,14 @@ function ContactSection() {
           Race is over. Let&apos;s talk about your next project.
         </div>
 
-        <div className="space-y-2">
-          {links.map((link, i) => (
-            <motion.a
+        <div ref={listRef} className="space-y-2">
+          {links.map((link) => (
+            <a
               key={link.label}
+              data-link
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 * i }}
               className="flex items-center gap-3 bg-[#131008] border border-[#221810] rounded-lg px-3 py-2.5 cursor-pointer transition-all hover:border-[#c4722a] hover:bg-[#181208] no-underline group"
             >
               <span className="text-sm">{link.icon}</span>
@@ -451,7 +535,7 @@ function ContactSection() {
               <span className="font-mono text-[10px] text-[#4a3c28] group-hover:text-[#c4722a] transition-colors">
                 →
               </span>
-            </motion.a>
+            </a>
           ))}
         </div>
 

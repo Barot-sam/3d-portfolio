@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
 import { useEffect, useRef } from "react";
 
 interface MiniCanvasProps {
@@ -136,17 +136,40 @@ const demos = [
 ];
 
 export default function DemoGrid() {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const cards = el.querySelectorAll("[data-card]");
+          gsap.from(cards, {
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {demos.map((demo, i) => (
-          <motion.div
+      <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {demos.map((demo) => (
+          <div
             key={demo.title}
+            data-card
             className="group bg-[#131008] border border-dashed border-[#2e2010] rounded-xl overflow-hidden cursor-default transition-all hover:border-[#c4722a66] hover:-translate-y-0.5"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
           >
             {/* Preview area */}
             <div
@@ -176,7 +199,7 @@ export default function DemoGrid() {
                 {demo.how}
               </span>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

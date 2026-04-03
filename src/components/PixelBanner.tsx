@@ -1,10 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
 import { useEffect, useRef } from "react";
 
 export default function PixelBanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -40,22 +41,31 @@ export default function PixelBanner() {
     return () => cancelAnimationFrame(animId);
   }, []);
 
+  useEffect(() => {
+    if (textRef.current) {
+      gsap.from(textRef.current, {
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.8,
+        ease: "power2.out",
+      });
+    }
+  }, []);
+
   return (
     <div className="relative overflow-hidden rounded-xl border border-[#2a1e10] bg-[#0a0806] h-20 flex items-center justify-center">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
       <div className="scanline-overlay" />
-      <motion.div
+      <div
+        ref={textRef}
         className="relative z-10 font-pixel text-base text-[#c4722a]"
         style={{
           textShadow: "2px 2px 0 #6a3010, 4px 4px 0 #3a1808",
           animation: "pglow 2.5s ease-in-out infinite alternate",
         }}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
       >
         Om Brahmbhatt
-      </motion.div>
+      </div>
     </div>
   );
 }

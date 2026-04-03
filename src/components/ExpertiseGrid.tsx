@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
 const expertise = [
   {
@@ -54,17 +55,40 @@ const expertise = [
 ];
 
 export default function ExpertiseGrid() {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const cards = el.querySelectorAll("[data-card]");
+          gsap.from(cards, {
+            opacity: 0,
+            x: -20,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {expertise.map((card, i) => (
-        <motion.div
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {expertise.map((card) => (
+        <div
           key={card.title}
+          data-card
           className="bg-[#131008] border border-[#221810] rounded-r-xl px-4 py-3.5 cursor-default transition-colors hover:bg-[#181208]"
           style={{ borderLeft: `3px solid ${card.color}` }}
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1, duration: 0.5 }}
         >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-base leading-none">{card.icon}</span>
@@ -99,7 +123,7 @@ export default function ExpertiseGrid() {
               </span>
             ))}
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 
 const languages = [
@@ -23,6 +23,14 @@ export default function LanguageBars() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
+          const items = el.querySelectorAll("[data-bar]");
+          gsap.from(items, {
+            opacity: 0,
+            x: -20,
+            duration: 0.4,
+            stagger: 0.08,
+            ease: "power2.out",
+          });
           observer.disconnect();
         }
       },
@@ -34,14 +42,11 @@ export default function LanguageBars() {
 
   return (
     <div ref={ref} className="flex flex-col gap-2">
-      {languages.map((lang, i) => (
-        <motion.div
+      {languages.map((lang) => (
+        <div
           key={lang.name}
+          data-bar
           className="flex items-center gap-3"
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.08, duration: 0.4 }}
         >
           <span className="w-[86px] text-[10px] text-[#8a7858] font-mono shrink-0">
             {lang.name}
@@ -58,7 +63,7 @@ export default function LanguageBars() {
           <span className="w-[30px] text-right text-[9px] text-[#6a5840] font-mono">
             {lang.pct}%
           </span>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

@@ -6,11 +6,14 @@ interface ScrollState {
   speed: number;
   lap: number;
   racing: boolean;
+  nitro: number; // 0–1
+  boosting: boolean;
   setProgress: (progress: number) => void;
   setActiveSection: (section: string) => void;
   setSpeed: (speed: number) => void;
   setLap: (lap: number) => void;
   setRacing: (racing: boolean) => void;
+  setNitro: (nitro: number, boosting: boolean) => void;
   reset: () => void;
 }
 
@@ -20,13 +23,16 @@ export const useScrollStore = create<ScrollState>((set) => ({
   speed: 0,
   lap: 1,
   racing: true,
+  nitro: 1,
+  boosting: false,
   setProgress: (progress) => set({ progress }),
   setActiveSection: (activeSection) => set({ activeSection }),
   setSpeed: (speed) => set({ speed }),
   setLap: (lap) => set({ lap }),
   setRacing: (racing) => set({ racing }),
+  setNitro: (nitro, boosting) => set({ nitro, boosting }),
   reset: () =>
-    set({ progress: 0, activeSection: "hero", speed: 0, lap: 1, racing: true }),
+    set({ progress: 0, activeSection: "hero", speed: 0, lap: 1, racing: true, nitro: 1, boosting: false }),
 }));
 
 // Section thresholds along the track (0-1)

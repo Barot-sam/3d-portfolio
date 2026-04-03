@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 
 const lines = [
@@ -13,7 +13,7 @@ const lines = [
   { t: "cmd", v: "$ ls ./stack" },
   {
     t: "hi",
-    v: "next.js  remix  astro  three.js  framer-motion  fastapi  pytorch  langchain",
+    v: "next.js  remix  astro  three.js  gsap  fastapi  pytorch  langchain",
   },
   { t: "cmd", v: "$ npm run lighthouse" },
   {
@@ -43,7 +43,31 @@ export default function Terminal() {
     [],
   );
   const bodyRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const mounted = useRef(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.from(el, {
+            opacity: 0,
+            y: 30,
+            duration: 0.6,
+            delay: 0.1,
+            ease: "power2.out",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     mounted.current = true;
@@ -99,12 +123,9 @@ export default function Terminal() {
   }, [displayLines]);
 
   return (
-    <motion.div
+    <div
+      ref={containerRef}
       className="rounded-xl border border-[#2a1e10] bg-[#0a0806] overflow-hidden font-mono"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: 0.1 }}
     >
       {/* Title bar */}
       <div className="flex items-center gap-1.5 px-3.5 py-2 bg-[#1a1208] border-b border-[#2a1e10]">
@@ -136,6 +157,6 @@ export default function Terminal() {
           </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

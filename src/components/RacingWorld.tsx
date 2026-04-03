@@ -104,8 +104,12 @@ function buildRibbonGeometry(
     const cx = p.x + left.x * lateralOffset;
     const cz = p.z + left.z * lateralOffset;
     positions.push(
-      cx + left.x * halfWidth, yHeight, cz + left.z * halfWidth,
-      cx - left.x * halfWidth, yHeight, cz - left.z * halfWidth,
+      cx + left.x * halfWidth,
+      yHeight,
+      cz + left.z * halfWidth,
+      cx - left.x * halfWidth,
+      yHeight,
+      cz - left.z * halfWidth,
     );
     if (i < segs) {
       const a = i * 2;
@@ -141,7 +145,11 @@ function TrackSurface() {
   return (
     <group>
       <mesh geometry={asphaltGeo}>
-        <meshStandardMaterial color="#606060" roughness={0.88} metalness={0.05} />
+        <meshStandardMaterial
+          color="#606060"
+          roughness={0.88}
+          metalness={0.05}
+        />
       </mesh>
       <mesh geometry={leftEdgeGeo}>
         <meshStandardMaterial color="#eeeeee" roughness={0.65} metalness={0} />
@@ -182,7 +190,10 @@ function TrackEdges() {
       vertOffset += (segs + 1) * 2;
     }
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.Float32BufferAttribute(allPositions, 3));
+    geo.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(allPositions, 3),
+    );
     geo.setIndex(allIndices);
     geo.computeVertexNormals();
     return geo;
@@ -212,11 +223,17 @@ function TrackEdges() {
       {/* Start grid boxes */}
       {gridMarks.map((m, i) => (
         <group key={`grid${i}`}>
-          <mesh position={[m.pos[0] - 3, 0.05, m.pos[2]]} rotation={[0, m.rot, 0]}>
+          <mesh
+            position={[m.pos[0] - 3, 0.05, m.pos[2]]}
+            rotation={[0, m.rot, 0]}
+          >
             <boxGeometry args={[1.2, 0.01, 2.0]} />
             <meshStandardMaterial color="#ffffff" roughness={0.6} />
           </mesh>
-          <mesh position={[m.pos[0] + 3, 0.05, m.pos[2]]} rotation={[0, m.rot, 0]}>
+          <mesh
+            position={[m.pos[0] + 3, 0.05, m.pos[2]]}
+            rotation={[0, m.rot, 0]}
+          >
             <boxGeometry args={[1.2, 0.01, 2.0]} />
             <meshStandardMaterial color="#ffffff" roughness={0.6} />
           </mesh>
@@ -342,8 +359,10 @@ function F1CarBody({
     if (rlWheel.current) rlWheel.current.rotation.x += spin;
     if (rrWheel.current) rrWheel.current.rotation.x += spin;
     // Read live steer angle directly from CAR_STATE every frame
-    if (isPlayer && flSteer.current) flSteer.current.rotation.y = CAR_STATE.steerAngle;
-    if (isPlayer && frSteer.current) frSteer.current.rotation.y = CAR_STATE.steerAngle;
+    if (isPlayer && flSteer.current)
+      flSteer.current.rotation.y = CAR_STATE.steerAngle;
+    if (isPlayer && frSteer.current)
+      frSteer.current.rotation.y = CAR_STATE.steerAngle;
   });
   return (
     <group>
@@ -363,20 +382,36 @@ function F1CarBody({
       {/* Nose cone - long taper, MCL style dropped nose */}
       <mesh position={[0, 0.1, -1.5]} rotation={[0.05, 0, 0]}>
         <boxGeometry args={[0.35, 0.1, 0.9]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       <mesh position={[0, 0.08, -2.0]} rotation={[0.06, 0, 0]}>
         <boxGeometry args={[0.22, 0.07, 0.6]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       <mesh position={[0, 0.06, -2.35]}>
         <boxGeometry args={[0.14, 0.04, 0.35]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       {/* Nose tip */}
       <mesh position={[0, 0.055, -2.55]}>
         <boxGeometry args={[0.08, 0.025, 0.12]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
 
       {/* ── FRONT WING ── */}
@@ -388,24 +423,40 @@ function F1CarBody({
       {/* Upper flap */}
       <mesh position={[0, 0.065, -2.55]}>
         <boxGeometry args={[1.5, 0.015, 0.15]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       {/* Lower flap */}
       <mesh position={[0, 0.025, -2.65]}>
         <boxGeometry args={[1.55, 0.015, 0.1]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       {/* Endplates - complex shape */}
       {[-0.8, 0.8].map((x, i) => (
         <group key={`fwep${i}`}>
           <mesh position={[x, 0.05, -2.6]}>
             <boxGeometry args={[0.025, 0.1, 0.35]} />
-            <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+            <meshStandardMaterial
+              color={accentColor}
+              metalness={0.3}
+              roughness={0.2}
+            />
           </mesh>
           {/* Endplate canard */}
           <mesh position={[x, 0.04, -2.75]} rotation={[0.2, 0, 0]}>
             <boxGeometry args={[0.02, 0.04, 0.08]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
         </group>
       ))}
@@ -413,7 +464,11 @@ function F1CarBody({
       {[-0.08, 0.08].map((x, i) => (
         <mesh key={`fwp${i}`} position={[x, 0.045, -2.45]}>
           <boxGeometry args={[0.015, 0.03, 0.15]} />
-          <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+          <meshStandardMaterial
+            color="#1a1a1a"
+            metalness={0.4}
+            roughness={0.4}
+          />
         </mesh>
       ))}
 
@@ -424,32 +479,56 @@ function F1CarBody({
           {/* Upper sidepod */}
           <mesh position={[s * 0.42, 0.22, -0.15]}>
             <boxGeometry args={[0.3, 0.12, 1.5]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
           {/* Sidepod accent stripe */}
           <mesh position={[s * 0.56, 0.22, -0.15]}>
             <boxGeometry args={[0.02, 0.1, 1.2]} />
-            <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+            <meshStandardMaterial
+              color={accentColor}
+              metalness={0.3}
+              roughness={0.2}
+            />
           </mesh>
           {/* Undercut shape */}
           <mesh position={[s * 0.42, 0.14, 0.1]}>
             <boxGeometry args={[0.28, 0.06, 1.0]} />
-            <meshStandardMaterial color="#111" metalness={0.3} roughness={0.5} />
+            <meshStandardMaterial
+              color="#111"
+              metalness={0.3}
+              roughness={0.5}
+            />
           </mesh>
           {/* Sidepod inlet - large opening */}
           <mesh position={[s * 0.44, 0.24, -0.92]}>
             <boxGeometry args={[0.28, 0.14, 0.06]} />
-            <meshStandardMaterial color="#050505" metalness={0.0} roughness={0.8} />
+            <meshStandardMaterial
+              color="#050505"
+              metalness={0.0}
+              roughness={0.8}
+            />
           </mesh>
           {/* Inlet surround - accent colored */}
           <mesh position={[s * 0.44, 0.32, -0.92]}>
             <boxGeometry args={[0.3, 0.02, 0.07]} />
-            <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+            <meshStandardMaterial
+              color={accentColor}
+              metalness={0.3}
+              roughness={0.2}
+            />
           </mesh>
           {/* Sidepod vane */}
           <mesh position={[s * 0.56, 0.2, -0.7]}>
             <boxGeometry args={[0.015, 0.12, 0.2]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
         </group>
       ))}
@@ -464,7 +543,11 @@ function F1CarBody({
       {[-0.22, 0.22].map((x, i) => (
         <mesh key={`cp${i}`} position={[x, 0.26, -0.55]}>
           <boxGeometry args={[0.04, 0.08, 0.6]} />
-          <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+          <meshStandardMaterial
+            color={accentColor}
+            metalness={0.3}
+            roughness={0.2}
+          />
         </mesh>
       ))}
       {/* HALO - titanium colored */}
@@ -513,7 +596,11 @@ function F1CarBody({
       {/* T-cam */}
       <mesh position={[0, 0.49, -0.15]}>
         <boxGeometry args={[0.04, 0.02, 0.06]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
 
       {/* ── MIRRORS ── */}
@@ -521,7 +608,11 @@ function F1CarBody({
         <group key={`mir${i}`}>
           <mesh position={[x, 0.3, -0.65]}>
             <boxGeometry args={[0.06, 0.04, 0.03]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
           {/* Mirror glass */}
           <mesh position={[x, 0.3, -0.665]}>
@@ -531,7 +622,11 @@ function F1CarBody({
           {/* Mirror stalk */}
           <mesh position={[x * 0.85, 0.28, -0.65]}>
             <boxGeometry args={[0.08, 0.012, 0.015]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
         </group>
       ))}
@@ -544,7 +639,11 @@ function F1CarBody({
       {/* Engine cover accent swoosh */}
       <mesh position={[0, 0.28, 0.3]}>
         <boxGeometry args={[0.36, 0.02, 0.8]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       {/* Shark fin */}
       <mesh position={[0, 0.32, 0.7]}>
@@ -556,12 +655,20 @@ function F1CarBody({
       {/* Main plane */}
       <mesh position={[0, 0.52, 1.3]}>
         <boxGeometry args={[0.82, 0.03, 0.22]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       {/* DRS flap */}
       <mesh position={[0, 0.565, 1.25]}>
         <boxGeometry args={[0.78, 0.02, 0.12]} />
-        <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+        <meshStandardMaterial
+          color={accentColor}
+          metalness={0.3}
+          roughness={0.2}
+        />
       </mesh>
       {/* Beam wing */}
       <mesh position={[0, 0.38, 1.28]}>
@@ -572,7 +679,11 @@ function F1CarBody({
       {[-0.42, 0.42].map((x, i) => (
         <mesh key={`rwe${i}`} position={[x, 0.47, 1.3]}>
           <boxGeometry args={[0.025, 0.22, 0.3]} />
-          <meshStandardMaterial color={accentColor} metalness={0.3} roughness={0.2} />
+          <meshStandardMaterial
+            color={accentColor}
+            metalness={0.3}
+            roughness={0.2}
+          />
         </mesh>
       ))}
       {/* Rear wing swan-neck mounts */}
@@ -605,26 +716,39 @@ function F1CarBody({
       {[-0.25, -0.08, 0.08, 0.25].map((x, i) => (
         <mesh key={`dff${i}`} position={[x, 0.06, 1.35]}>
           <boxGeometry args={[0.015, 0.08, 0.2]} />
-          <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+          <meshStandardMaterial
+            color="#1a1a1a"
+            metalness={0.4}
+            roughness={0.4}
+          />
         </mesh>
       ))}
       {/* Rain light */}
       <mesh position={[0, 0.22, 1.42]}>
         <boxGeometry args={[0.2, 0.04, 0.025]} />
-        <meshStandardMaterial color="#ff2200" emissive="#ff2200" emissiveIntensity={3} />
+        <meshStandardMaterial
+          color="#ff2200"
+          emissive="#ff2200"
+          emissiveIntensity={3}
+        />
       </mesh>
       {/* Headlight lenses — emissive white on nose sides */}
       {[-0.14, 0.14].map((x, i) => (
         <mesh key={`hl${i}`} position={[x, 0.1, -1.52]}>
           <boxGeometry args={[0.07, 0.05, 0.02]} />
-          <meshStandardMaterial color="#ddeeff" emissive="#aaccff" emissiveIntensity={5} roughness={0.1} />
+          <meshStandardMaterial
+            color="#ddeeff"
+            emissive="#aaccff"
+            emissiveIntensity={5}
+            roughness={0.1}
+          />
         </mesh>
       ))}
 
       {/* ── FRONT WHEELS ── */}
       {[
         { x: -0.72, spinRef: flWheel, steerRef: flSteer },
-        { x: 0.72,  spinRef: frWheel, steerRef: frSteer },
+        { x: 0.72, spinRef: frWheel, steerRef: frSteer },
       ].map(({ x, spinRef, steerRef }, i) => {
         const outSign = x > 0 ? 1 : -1;
         return (
@@ -633,7 +757,11 @@ function F1CarBody({
               {/* Rubber tread (outer barrel) */}
               <mesh rotation={[0, 0, Math.PI / 2]}>
                 <cylinderGeometry args={[0.22, 0.22, 0.14, 32]} />
-                <meshStandardMaterial color="#2a2a2a" metalness={0.0} roughness={0.95} />
+                <meshStandardMaterial
+                  color="#2a2a2a"
+                  metalness={0.0}
+                  roughness={0.95}
+                />
               </mesh>
               {/* Outer sidewall (red - soft compound) */}
               <mesh
@@ -654,7 +782,11 @@ function F1CarBody({
               {/* Rim */}
               <mesh rotation={[0, 0, Math.PI / 2]}>
                 <cylinderGeometry args={[0.13, 0.13, 0.15, 20]} />
-                <meshStandardMaterial color="#c0c0c0" metalness={0.85} roughness={0.1} />
+                <meshStandardMaterial
+                  color="#c0c0c0"
+                  metalness={0.85}
+                  roughness={0.1}
+                />
               </mesh>
               {/* Center lock nut */}
               <mesh
@@ -662,7 +794,11 @@ function F1CarBody({
                 position={[outSign * 0.076, 0, 0]}
               >
                 <cylinderGeometry args={[0.035, 0.035, 0.015, 6]} />
-                <meshStandardMaterial color="#e8e8e8" metalness={0.9} roughness={0.05} />
+                <meshStandardMaterial
+                  color="#e8e8e8"
+                  metalness={0.9}
+                  roughness={0.05}
+                />
               </mesh>
             </group>
           </group>
@@ -681,7 +817,11 @@ function F1CarBody({
               {/* Rubber tread (outer barrel) */}
               <mesh rotation={[0, 0, Math.PI / 2]}>
                 <cylinderGeometry args={[0.25, 0.25, 0.2, 32]} />
-                <meshStandardMaterial color="#2a2a2a" metalness={0.0} roughness={0.95} />
+                <meshStandardMaterial
+                  color="#2a2a2a"
+                  metalness={0.0}
+                  roughness={0.95}
+                />
               </mesh>
               {/* Outer sidewall (yellow - medium compound) */}
               <mesh
@@ -702,7 +842,11 @@ function F1CarBody({
               {/* Rim */}
               <mesh rotation={[0, 0, Math.PI / 2]}>
                 <cylinderGeometry args={[0.15, 0.15, 0.21, 20]} />
-                <meshStandardMaterial color="#c0c0c0" metalness={0.85} roughness={0.1} />
+                <meshStandardMaterial
+                  color="#c0c0c0"
+                  metalness={0.85}
+                  roughness={0.1}
+                />
               </mesh>
               {/* Center lock nut */}
               <mesh
@@ -710,7 +854,11 @@ function F1CarBody({
                 position={[outSign * 0.106, 0, 0]}
               >
                 <cylinderGeometry args={[0.04, 0.04, 0.015, 6]} />
-                <meshStandardMaterial color="#e8e8e8" metalness={0.9} roughness={0.05} />
+                <meshStandardMaterial
+                  color="#e8e8e8"
+                  metalness={0.9}
+                  roughness={0.05}
+                />
               </mesh>
             </group>
           </group>
@@ -768,11 +916,19 @@ function F1CarBody({
         <group key={`bb${i}`}>
           <mesh position={[x, 0.12, -1.0]}>
             <boxGeometry args={[0.012, 0.1, 0.15]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
           <mesh position={[x * 1.1, 0.1, -1.05]}>
             <boxGeometry args={[0.012, 0.08, 0.12]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.4} />
+            <meshStandardMaterial
+              color="#1a1a1a"
+              metalness={0.4}
+              roughness={0.4}
+            />
           </mesh>
         </group>
       ))}
@@ -797,23 +953,25 @@ function RivalCar({
   const carRef = useRef<THREE.Group>(null);
 
   // Initialise from track position so the car starts on track
-  const state = useRef((() => {
-    const t0 = Math.min(offset, 0.999);
-    const p0 = path.getPointAt(t0);
-    const left = getTrackLeft(path, t0);
-    const fwd = path.getTangentAt(t0);
-    return {
-      pos: new THREE.Vector3(
-        p0.x + left.x * laneOffset,
-        0.17,
-        p0.z + left.z * laneOffset,
-      ),
-      yaw: Math.atan2(fwd.x, fwd.z),
-      speed: 0,
-      steerAngle: 0,
-      nearestT: t0,
-    };
-  })());
+  const state = useRef(
+    (() => {
+      const t0 = Math.min(offset, 0.999);
+      const p0 = path.getPointAt(t0);
+      const left = getTrackLeft(path, t0);
+      const fwd = path.getTangentAt(t0);
+      return {
+        pos: new THREE.Vector3(
+          p0.x + left.x * laneOffset,
+          0.17,
+          p0.z + left.z * laneOffset,
+        ),
+        yaw: Math.atan2(fwd.x, fwd.z),
+        speed: 0,
+        steerAngle: 0,
+        nearestT: t0,
+      };
+    })(),
+  );
 
   // Pre-sampled track points for nearest-point search
   const samples = useMemo(() => {
@@ -839,8 +997,12 @@ function RivalCar({
     const dt = Math.min(delta, 0.05);
     const s = state.current;
 
-    const ACCEL = 32, BRAKE = 50, MAX_REV = 8;
-    const DRAG = 0.975, MAX_STEER = 0.55, WHEELBASE = 2.8;
+    const ACCEL = 32,
+      BRAKE = 50,
+      MAX_REV = 8;
+    const DRAG = 0.975,
+      MAX_STEER = 0.55,
+      WHEELBASE = 2.8;
     const LOOKAHEAD = 12; // units ahead on track to steer toward
 
     // Find nearest track sample (search near last known t for speed)
@@ -853,7 +1015,10 @@ function RivalCar({
       const dx = s.pos.x - sample.pos.x;
       const dz = s.pos.z - sample.pos.z;
       const d = dx * dx + dz * dz;
-      if (d < bestD) { bestD = d; bestT = sample.t; }
+      if (d < bestD) {
+        bestD = d;
+        bestT = sample.t;
+      }
     }
     // If nothing found nearby (e.g. after crossing t=1→0), full scan
     if (bestD > 400) {
@@ -861,7 +1026,10 @@ function RivalCar({
         const dx = s.pos.x - sample.pos.x;
         const dz = s.pos.z - sample.pos.z;
         const d = dx * dx + dz * dz;
-        if (d < bestD) { bestD = d; bestT = sample.t; }
+        if (d < bestD) {
+          bestD = d;
+          bestT = sample.t;
+        }
       }
     }
     s.nearestT = bestT;
@@ -889,7 +1057,7 @@ function RivalCar({
     s.steerAngle += (steerTarget - s.steerAngle) * Math.min(1, 6 * dt);
 
     // Throttle — ease off on tight corners
-    const cornerFactor = 1 - Math.abs(s.steerAngle) / MAX_STEER * 0.4;
+    const cornerFactor = 1 - (Math.abs(s.steerAngle) / MAX_STEER) * 0.4;
     const effectiveTop = topSpeed * cornerFactor;
     if (s.speed < effectiveTop) {
       s.speed += ACCEL * dt;
@@ -919,10 +1087,25 @@ function RivalCar({
         <F1CarBody bodyColor={color} accentColor="#ddd" />
       </group>
       {/* Rear red light */}
-      <pointLight position={[0, 0.2, -1.4]} color="#ff4444" intensity={2} distance={6} />
+      <pointLight
+        position={[0, 0.2, -1.4]}
+        color="#ff4444"
+        intensity={2}
+        distance={6}
+      />
       {/* Front headlights */}
-      <pointLight position={[-0.35, 0.15, 2.6]} color="#ffffff" intensity={10} distance={28} />
-      <pointLight position={[ 0.35, 0.15, 2.6]} color="#ffffff" intensity={10} distance={28} />
+      <pointLight
+        position={[-0.35, 0.15, 2.6]}
+        color="#ffffff"
+        intensity={10}
+        distance={28}
+      />
+      <pointLight
+        position={[0.35, 0.15, 2.6]}
+        color="#ffffff"
+        intensity={10}
+        distance={28}
+      />
     </group>
   );
 }
@@ -1069,26 +1252,54 @@ function NightSky() {
       {/* Sky dome */}
       <mesh>
         <sphereGeometry args={[1200, 24, 12]} />
-        <meshStandardMaterial color="#05070f" side={THREE.BackSide} roughness={1} metalness={0} />
+        <meshStandardMaterial
+          color="#05070f"
+          side={THREE.BackSide}
+          roughness={1}
+          metalness={0}
+        />
       </mesh>
       {/* Horizon glow */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[1100, 1100, 120, 32, 1, true]} />
-        <meshStandardMaterial color="#0d1a3a" side={THREE.BackSide} transparent opacity={0.5} roughness={1} />
+        <meshStandardMaterial
+          color="#0d1a3a"
+          side={THREE.BackSide}
+          transparent
+          opacity={0.5}
+          roughness={1}
+        />
       </mesh>
       {/* Moon */}
       <mesh position={[-300, 500, -800]}>
         <sphereGeometry args={[22, 16, 12]} />
-        <meshStandardMaterial color="#e8e0cc" emissive="#c0b890" emissiveIntensity={0.6} roughness={1} />
+        <meshStandardMaterial
+          color="#e8e0cc"
+          emissive="#c0b890"
+          emissiveIntensity={0.6}
+          roughness={1}
+        />
       </mesh>
       <mesh position={[-300, 500, -800]}>
         <sphereGeometry args={[38, 10, 8]} />
-        <meshStandardMaterial color="#c8d8ff" transparent opacity={0.12} emissive="#a0b8f0" emissiveIntensity={0.4} roughness={1} />
+        <meshStandardMaterial
+          color="#c8d8ff"
+          transparent
+          opacity={0.12}
+          emissive="#a0b8f0"
+          emissiveIntensity={0.4}
+          roughness={1}
+        />
       </mesh>
       {/* Stars — single instanced mesh, 1 draw call */}
       <instancedMesh ref={starsRef} args={[undefined, undefined, STAR_COUNT]}>
         <sphereGeometry args={[1, 3, 3]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1} roughness={1} />
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={1}
+          roughness={1}
+        />
       </instancedMesh>
     </group>
   );
@@ -1112,7 +1323,11 @@ function TrackLights() {
       const offset = TRACK_HALF_WIDTH + 3;
       for (const side of [1, -1]) {
         poleArr.push({
-          pos: [p.x + left.x * offset * side, 0.12, p.z + left.z * offset * side],
+          pos: [
+            p.x + left.x * offset * side,
+            0.12,
+            p.z + left.z * offset * side,
+          ],
           side,
         });
       }
@@ -1133,17 +1348,38 @@ function TrackLights() {
         <group key={i}>
           <mesh position={[pole.pos[0], pole.pos[1] + 8, pole.pos[2]]}>
             <cylinderGeometry args={[0.12, 0.18, 16, 6]} />
-            <meshStandardMaterial color="#2a2a2a" metalness={0.6} roughness={0.4} />
+            <meshStandardMaterial
+              color="#2a2a2a"
+              metalness={0.6}
+              roughness={0.4}
+            />
           </mesh>
-          <mesh position={[pole.pos[0] + (pole.side === 1 ? -2.2 : 2.2), pole.pos[1] + 15.05, pole.pos[2]]}>
+          <mesh
+            position={[
+              pole.pos[0] + (pole.side === 1 ? -2.2 : 2.2),
+              pole.pos[1] + 15.05,
+              pole.pos[2],
+            ]}
+          >
             <boxGeometry args={[0.8, 0.3, 0.6]} />
-            <meshStandardMaterial color="#fff8e0" emissive="#fff0a0" emissiveIntensity={4} roughness={1} />
+            <meshStandardMaterial
+              color="#fff8e0"
+              emissive="#fff0a0"
+              emissiveIntensity={4}
+              roughness={1}
+            />
           </mesh>
         </group>
       ))}
       {/* 16 evenly-spaced lights — ~87 units apart, overlapping coverage */}
       {lights.map((l, i) => (
-        <pointLight key={i} position={l.pos} intensity={500} distance={180} color="#fff4d0" />
+        <pointLight
+          key={i}
+          position={l.pos}
+          intensity={500}
+          distance={180}
+          color="#fff4d0"
+        />
       ))}
     </group>
   );
@@ -1255,7 +1491,9 @@ function TrackEnvironment() {
             <group position={[p.x + left.x * offset, 0, p.z + left.z * offset]}>
               <mesh position={[0, 0.25, 0]}>
                 <boxGeometry args={[0.3, 0.5, 1.5]} />
-                <meshStandardMaterial color={isCorner ? "#c4722a" : "#2a1e10"} />
+                <meshStandardMaterial
+                  color={isCorner ? "#c4722a" : "#2a1e10"}
+                />
               </mesh>
               {isCorner && (
                 <mesh position={[0, 0.5, 0]}>
@@ -1268,7 +1506,9 @@ function TrackEnvironment() {
             <group position={[p.x - left.x * offset, 0, p.z - left.z * offset]}>
               <mesh position={[0, 0.25, 0]}>
                 <boxGeometry args={[0.3, 0.5, 1.5]} />
-                <meshStandardMaterial color={isCorner ? "#c4722a" : "#2a1e10"} />
+                <meshStandardMaterial
+                  color={isCorner ? "#c4722a" : "#2a1e10"}
+                />
               </mesh>
               {isCorner && (
                 <mesh position={[0, 0.5, 0]}>
@@ -1291,7 +1531,11 @@ function TrackEnvironment() {
           {/* Light housing */}
           <mesh position={[0, 12.2, 0]}>
             <boxGeometry args={[1.2, 0.4, 0.5]} />
-            <meshStandardMaterial color="#e8e8e8" metalness={0.9} roughness={0.05} />
+            <meshStandardMaterial
+              color="#e8e8e8"
+              metalness={0.9}
+              roughness={0.05}
+            />
           </mesh>
           {/* Light panels */}
           {[-0.35, 0, 0.35].map((x, j) => (
@@ -1489,6 +1733,23 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
   const prevT = useRef(0);
   const lapRef = useRef(1);
 
+  /* ── Engine audio — fades with car speed ── */
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioGain = useRef(0);
+  const audioStarted = useRef(false);
+
+  useEffect(() => {
+    const audio = new Audio("/fonts/car-audio.mp3");
+    audio.loop = true;
+    audio.volume = 0;
+    audio.preload = "auto";
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.src = "";
+    };
+  }, []);
+
   const billboards = useMemo(() => {
     const stops = [
       { t: 0.05, id: "hero" },
@@ -1539,15 +1800,23 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
     const k = keys.current;
     const dt = Math.min(delta, 0.05);
 
-    const ACCEL = 32, BRAKE = 50, MAX_SPD = 80, MAX_REV = 12;
-    const BOOST_EXTRA = 60, BOOST_DRAIN = 0.117, NITRO_REGEN = 0.12;
-    const DRAG = 0.975, MAX_STEER = 0.32, WHEELBASE = 2.8;
+    const ACCEL = 32,
+      BRAKE = 50,
+      MAX_SPD = 80,
+      MAX_REV = 12;
+    const BOOST_EXTRA = 60,
+      BOOST_DRAIN = 0.117,
+      NITRO_REGEN = 0.12;
+    const DRAG = 0.975,
+      MAX_STEER = 0.32,
+      WHEELBASE = 2.8;
 
-    const thr   = k.has("w") || k.has("W") || k.has("ArrowUp") ? 1 : 0;
-    const brk   = k.has("s") || k.has("S") || k.has("ArrowDown") ? 1 : 0;
-    const sl    = k.has("a") || k.has("A") || k.has("ArrowLeft") ? 1 : 0;
-    const sr    = k.has("d") || k.has("D") || k.has("ArrowRight") ? 1 : 0;
-    const boost = (k.has("Shift") || k.has("shift")) && nitro.current > 0 && thr ? 1 : 0;
+    const thr = k.has("w") || k.has("W") || k.has("ArrowUp") ? 1 : 0;
+    const brk = k.has("s") || k.has("S") || k.has("ArrowDown") ? 1 : 0;
+    const sl = k.has("a") || k.has("A") || k.has("ArrowLeft") ? 1 : 0;
+    const sr = k.has("d") || k.has("D") || k.has("ArrowRight") ? 1 : 0;
+    const boost =
+      (k.has("Shift") || k.has("shift")) && nitro.current > 0 && thr ? 1 : 0;
 
     // Nitro tank
     if (boost) {
@@ -1563,11 +1832,14 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
     } else {
       CAR_STATE.steerAngle *= Math.max(0, 1 - 6 * dt);
     }
-    CAR_STATE.steerAngle = Math.max(-MAX_STEER, Math.min(MAX_STEER, CAR_STATE.steerAngle));
+    CAR_STATE.steerAngle = Math.max(
+      -MAX_STEER,
+      Math.min(MAX_STEER, CAR_STATE.steerAngle),
+    );
 
     // Speed
     const effectiveAccel = ACCEL + (boost ? BOOST_EXTRA : 0);
-    const effectiveMax   = MAX_SPD + (boost ? BOOST_EXTRA * 0.8 : 0);
+    const effectiveMax = MAX_SPD + (boost ? BOOST_EXTRA * 0.8 : 0);
     if (thr) {
       CAR_STATE.speed += effectiveAccel * dt;
     } else if (brk) {
@@ -1578,7 +1850,10 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
       }
     }
     CAR_STATE.speed *= Math.pow(DRAG, dt * 60);
-    CAR_STATE.speed = Math.max(-MAX_REV, Math.min(effectiveMax, CAR_STATE.speed));
+    CAR_STATE.speed = Math.max(
+      -MAX_REV,
+      Math.min(effectiveMax, CAR_STATE.speed),
+    );
     if (Math.abs(CAR_STATE.speed) < 0.05) CAR_STATE.speed = 0;
 
     // Yaw — bicycle model
@@ -1597,12 +1872,27 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
 
     // Steering wheel visual — amplified quarter-turn
     if (wheelRef.current) {
-      wheelRef.current.rotation.z = -CAR_STATE.steerAngle * (Math.PI / MAX_STEER);
+      wheelRef.current.rotation.z =
+        -CAR_STATE.steerAngle * (Math.PI / MAX_STEER);
     }
 
     // HUD speed + nitro
     setSpeed(Math.min(Math.abs(Math.round(CAR_STATE.speed * 2.8)), 350));
     setNitro(nitro.current, boost === 1);
+
+    // Engine audio — smoothly fade volume & pitch with speed
+    const absSpeed = Math.abs(CAR_STATE.speed);
+    const targetVol = Math.min(absSpeed / 40, 1); // full volume at 40 speed units
+    audioGain.current += (targetVol - audioGain.current) * 0.05; // smooth ramp
+    if (audioRef.current) {
+      audioRef.current.volume = Math.max(0, Math.min(1, audioGain.current));
+      audioRef.current.playbackRate = 0.6 + (absSpeed / 80) * 1.4; // 0.6–2.0 range
+      // Start playback on first throttle (requires user gesture context)
+      if (!audioStarted.current && absSpeed > 0.5) {
+        audioRef.current.play().catch(() => {});
+        audioStarted.current = true;
+      }
+    }
 
     // Section proximity
     let closestId = prevSection.current;
@@ -1611,12 +1901,17 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
       const dx = CAR_STATE.position.x - b.pos.x;
       const dz = CAR_STATE.position.z - b.pos.z;
       const d = Math.sqrt(dx * dx + dz * dz);
-      if (d < closestDist) { closestDist = d; closestId = b.id; }
+      if (d < closestDist) {
+        closestDist = d;
+        closestId = b.id;
+      }
     }
     if (closestDist < 90 && prevSection.current !== closestId) {
       prevSection.current = closestId;
       setActiveSection(closestId);
-      try { getAudioEngine().playSwoosh(); } catch {}
+      try {
+        getAudioEngine().playSwoosh();
+      } catch {}
     }
 
     // Track progress + lap detection
@@ -1626,7 +1921,10 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
       const dx = CAR_STATE.position.x - s.pos.x;
       const dz = CAR_STATE.position.z - s.pos.z;
       const d = dx * dx + dz * dz;
-      if (d < bestD) { bestD = d; bestT = s.t; }
+      if (d < bestD) {
+        bestD = d;
+        bestT = s.t;
+      }
     }
     if (prevT.current > 0.9 && bestT < 0.1) {
       lapRef.current += 1;
@@ -1644,28 +1942,61 @@ function PlayerCar({ path }: { path: THREE.CatmullRomCurve3 }) {
       <group rotation={[0, Math.PI, 0]}>
         <F1CarBody bodyColor="#ff8000" accentColor="#ffffff" isPlayer={true} />
         {/* Steering wheel inside cockpit (F1CarBody local space, nose at -Z) */}
-        <group ref={wheelRef} position={[0, 0.27, -0.68]} rotation={[0.4, 0, 0]}>
+        <group
+          ref={wheelRef}
+          position={[0, 0.27, -0.68]}
+          rotation={[0.4, 0, 0]}
+        >
           <mesh>
             <torusGeometry args={[0.07, 0.009, 8, 20]} />
-            <meshStandardMaterial color="#0a0a0a" metalness={0.5} roughness={0.4} />
+            <meshStandardMaterial
+              color="#0a0a0a"
+              metalness={0.5}
+              roughness={0.4}
+            />
           </mesh>
-          {([0, (Math.PI * 2) / 3, (Math.PI * 4) / 3] as number[]).map((a, i) => (
-            <mesh key={i} rotation={[0, 0, a]}>
-              <boxGeometry args={[0.006, 0.062, 0.006]} />
-              <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.5} />
-            </mesh>
-          ))}
+          {([0, (Math.PI * 2) / 3, (Math.PI * 4) / 3] as number[]).map(
+            (a, i) => (
+              <mesh key={i} rotation={[0, 0, a]}>
+                <boxGeometry args={[0.006, 0.062, 0.006]} />
+                <meshStandardMaterial
+                  color="#1a1a1a"
+                  metalness={0.4}
+                  roughness={0.5}
+                />
+              </mesh>
+            ),
+          )}
           <mesh>
             <cylinderGeometry args={[0.02, 0.02, 0.015, 12]} />
-            <meshStandardMaterial color="#ff8000" metalness={0.3} roughness={0.3} />
+            <meshStandardMaterial
+              color="#ff8000"
+              metalness={0.3}
+              roughness={0.3}
+            />
           </mesh>
         </group>
       </group>
       {/* Rear red light */}
-      <pointLight position={[0, 0.2, -1.4]} color="#ff2200" intensity={3} distance={8} />
+      <pointLight
+        position={[0, 0.2, -1.4]}
+        color="#ff2200"
+        intensity={3}
+        distance={8}
+      />
       {/* Front headlights — white, illuminate track ahead */}
-      <pointLight position={[-0.35, 0.15, 2.6]} color="#ffffff" intensity={12} distance={30} />
-      <pointLight position={[ 0.35, 0.15, 2.6]} color="#ffffff" intensity={12} distance={30} />
+      <pointLight
+        position={[-0.35, 0.15, 2.6]}
+        color="#ffffff"
+        intensity={12}
+        distance={30}
+      />
+      <pointLight
+        position={[0.35, 0.15, 2.6]}
+        color="#ffffff"
+        intensity={12}
+        distance={30}
+      />
     </group>
   );
 }
@@ -1724,11 +2055,30 @@ export default function RacingWorld() {
       <hemisphereLight args={["#0a1020", "#000000", 0.4]} />
       <ambientLight intensity={0.25} color="#1a2040" />
       {/* Moon — cold blue-white directional */}
-      <directionalLight position={[-80, 120, -60]} intensity={1.8} color="#b0c8ff" />
+      <directionalLight
+        position={[-80, 120, -60]}
+        intensity={1.8}
+        color="#b0c8ff"
+      />
       {/* Track floodlights — warm orange glow */}
-      <pointLight position={[272, 40, -240]} intensity={80} color="#f0a040" distance={600} />
-      <pointLight position={[100, 30, -100]} intensity={40} color="#f0a040" distance={400} />
-      <pointLight position={[450, 30, -380]} intensity={40} color="#f0a040" distance={400} />
+      <pointLight
+        position={[272, 40, -240]}
+        intensity={80}
+        color="#f0a040"
+        distance={600}
+      />
+      <pointLight
+        position={[100, 30, -100]}
+        intensity={40}
+        color="#f0a040"
+        distance={400}
+      />
+      <pointLight
+        position={[450, 30, -380]}
+        intensity={40}
+        color="#f0a040"
+        distance={400}
+      />
       <NightSky />
       <GroundGrid />
       <TrackSurface />
@@ -1736,9 +2086,27 @@ export default function RacingWorld() {
       <CurbBlocks />
       <TrackFencing />
       <PlayerCar path={path} />
-      <RivalCar path={path} offset={0.12} color="#3178c6" laneOffset={8}  topSpeed={62} />
-      <RivalCar path={path} offset={0.38} color="#dc382d" laneOffset={-8} topSpeed={68} />
-      <RivalCar path={path} offset={0.62} color="#22c55e" laneOffset={-4} topSpeed={58} />
+      <RivalCar
+        path={path}
+        offset={0.12}
+        color="#3178c6"
+        laneOffset={8}
+        topSpeed={62}
+      />
+      <RivalCar
+        path={path}
+        offset={0.38}
+        color="#dc382d"
+        laneOffset={-8}
+        topSpeed={68}
+      />
+      <RivalCar
+        path={path}
+        offset={0.62}
+        color="#22c55e"
+        laneOffset={-4}
+        topSpeed={58}
+      />
       {pitStops.map((stop) => (
         <PitStopBillboard key={stop.sectionId} {...stop} />
       ))}

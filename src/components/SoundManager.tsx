@@ -11,9 +11,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 class RetroAudioEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
-  private engineOsc: OscillatorNode | null = null;
-  private engineGain: GainNode | null = null;
-  private isPlaying = false;
   private _muted = false;
 
   get muted() {
@@ -26,35 +23,6 @@ class RetroAudioEngine {
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0.15;
     this.masterGain.connect(this.ctx.destination);
-  }
-
-  // Engine idle sound - oscillator based
-  startEngine() {
-    if (!this.ctx || !this.masterGain || this.isPlaying) return;
-    this.isPlaying = true;
-
-    this.engineGain = this.ctx.createGain();
-    this.engineGain.gain.value = 0.08;
-    this.engineGain.connect(this.masterGain);
-
-    this.engineOsc = this.ctx.createOscillator();
-    this.engineOsc.type = "sawtooth";
-    this.engineOsc.frequency.value = 80;
-    this.engineOsc.connect(this.engineGain);
-    this.engineOsc.start();
-  }
-
-  // Adjust engine pitch based on scroll speed
-  setEngineSpeed(speed: number) {
-    if (!this.engineOsc || !this.engineGain) return;
-    // Map speed 0-1 to frequency 80-400 Hz
-    const freq = 80 + speed * 320;
-    this.engineOsc.frequency.setTargetAtTime(freq, this.ctx!.currentTime, 0.1);
-    this.engineGain.gain.setTargetAtTime(
-      Math.min(0.08 + speed * 0.12, 0.2),
-      this.ctx!.currentTime,
-      0.1,
-    );
   }
 
   // Chiptune click for UI interactions
@@ -136,10 +104,8 @@ class RetroAudioEngine {
   }
 
   destroy() {
-    this.engineOsc?.stop();
     this.ctx?.close();
     this.ctx = null;
-    this.isPlaying = false;
   }
 }
 
@@ -180,7 +146,6 @@ export default function SoundManager() {
         setCountdown(count);
       } else {
         e.playCountdownBeep(true);
-        e.startEngine();
         setCountdown(-1);
         // Fade out overlay then set started
         if (overlayRef.current) {

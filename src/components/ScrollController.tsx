@@ -63,11 +63,6 @@ export default function ScrollController() {
           getAudioEngine().playGearShift();
         } catch {}
       }
-
-      // Engine pitch
-      try {
-        getAudioEngine().setEngineSpeed(speed * 0.5);
-      } catch {}
     },
     [setProgress, setActiveSection, setSpeed, setLap],
   );
